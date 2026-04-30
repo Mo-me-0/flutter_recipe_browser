@@ -11,18 +11,18 @@ class MealCategory {
     required this.strCategoryDescription,
   });
   
-  // map json data to MealCategory object filds
+  // map json data to MealCategory object fields
   factory MealCategory.fromJson(Map<String, dynamic> json) {
     return MealCategory(
-      idCategory: json['idCategory'],
-      strCategory: json['strCategory'],
-      strCategoryThumb: json['strCategoryThumb'],
-      strCategoryDescription: json['strCategoryDescription'],
+      idCategory: json['idCategory'] as String? ?? '',
+      strCategory: json['strCategory'] as String? ?? '',
+      strCategoryThumb: json['strCategoryThumb'] as String? ?? '',
+      strCategoryDescription: json['strCategoryDescription'] as String? ?? '',
     );
   }
   
   // convert object data to json
-  Map<String, dynamic> tojson() {
+  Map<String, dynamic> toJson() {
     return {
       'idCategory': idCategory,
       'strCategory': strCategory,
@@ -31,7 +31,7 @@ class MealCategory {
     };
   }
   
-  // to change the values of filds of MealCategory object
+  // to change the values of fields of MealCategory object
   // or to copy object data to another
   MealCategory copyWith({
     String? idCategory,

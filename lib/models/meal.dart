@@ -19,16 +19,16 @@ class Meal {
     required this.ingredients,
   });
   
-  // map json data to Meal object filds
+  // map json data to Meal object fields
   factory Meal.fromJson(Map<String, dynamic> json) {
     final meal = Meal(
-      idMeal: json['idMeal'],
-      strMeal: json['strMeal'],
-      strMealThumb: json['strMealThumb'],
-      strCategory: json['strCategory'],
-      strArea: json['strArea'],
-      strInstructions: json['strInstructions'],
-      strYoutube: json['strYoutube'],
+      idMeal: json['idMeal'] as String? ?? '',
+      strMeal: json['strMeal'] as String? ?? '',
+      strMealThumb: json['strMealThumb'] as String? ?? '',
+      strCategory: json['strCategory'] as String? ?? '',
+      strArea: json['strArea'] as String? ?? '',
+      strInstructions: json['strInstructions'] as String? ?? '',
+      strYoutube: json['strYoutube'] as String? ?? '',
       ingredients: [], // will be added later
     );
     
@@ -55,8 +55,8 @@ class Meal {
       if(ingredient != null && ingredient.toString().trim().isNotEmpty) {
         final combined = measure != null && // check if measure is null
           measure.toString().trim().isNotEmpty // check if measure is empty string
-            ? '$measure $ingredient' // return as 1 kg Chicken
-            : ingredient; // if there is no measure
+            ? '${measure.toString()} ${ingredient.toString()}' // return as 1 kg Chicken
+            : ingredient.toString(); // if there is no measure
         ingredientList.add(combined);
       }
     }
@@ -77,7 +77,7 @@ class Meal {
     };
   }
   
-  // to change the values of filds of Meal object 
+  // to change the values of fields of Meal object 
   // or to copy object data to another
   Meal copyWith({
     String? idMeal,
