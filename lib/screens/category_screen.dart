@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_recipe_browser/models/meal.dart';
+import 'package:flutter_recipe_browser/screens/detail_screen.dart';
 import 'package:flutter_recipe_browser/services/meal_api_service.dart';
 
 class CategoryScreen extends StatefulWidget {
@@ -105,7 +106,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                   color: Colors.blueGrey,
                   child: ListTile(
                     // navigate to details screen
-                    onTap: () => _openMeal(meal.idMeal),
+                    onTap: () => _openMeal(context, meal.idMeal),
                     contentPadding: const EdgeInsets.all(16),
                     textColor: Colors.white,
                     
@@ -156,5 +157,11 @@ class _CategoryScreenState extends State<CategoryScreen> {
   }
   
   // navigate to detail screen
-  void _openMeal(String mealId) {}
+  void _openMeal(BuildContext context, String mealId) {
+    Navigator.push(
+      context, MaterialPageRoute(
+        builder:(context) => DetailScreen(mealId: mealId),
+      ),
+    );
+  }
 }
