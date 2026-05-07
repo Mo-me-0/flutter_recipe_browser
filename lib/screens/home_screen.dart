@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_recipe_browser/models/meal_category.dart';
 import 'package:flutter_recipe_browser/screens/category_screen.dart';
+import 'package:flutter_recipe_browser/widgets/my_search_delegate.dart';
 import 'package:flutter_recipe_browser/services/meal_api_service.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -27,6 +28,19 @@ class _HomeScreenState extends State<HomeScreen> {
         title: const Text('Recipe Browser App',),
         backgroundColor: Colors.blueGrey,
         foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            onPressed: () {
+              showSearch(
+                context: context,
+                delegate: MySearchDelegate(),
+              );
+            },
+            icon: Icon(Icons.search,
+              size: 30,
+            ),
+          ),
+        ],
       ),
       
       body: FutureBuilder<List<MealCategory>>(

@@ -133,6 +133,45 @@ class MealApiService {
     }
   }
   
+  // Search for Meal by name
+  Future<List<Meal>> searchMeal(String mealName) async {
+    try {
+      // create a url to search by meal name
+      final url = Uri.https(_baseUrl, // domain
+        '/api/json/v1/1/search.php', // path
+        {'s': mealName}, // query parametr
+      );
+      
+      final response = await http
+        .get(url, headers: _headers)
+        .timeout(_timeout);
+      
+      // checks non-200 statuscode response
+      _checkResponse(response);
+      
+      // convert the html body to json object
+      final jsonData = jsonDecode(response.body);
+      
+      // if no such meal found
+      final meals = jsonData['meals'] as List?;
+      if (meals == null) return [];
+      
+      return meals
+          .map((json) => Meal.fromJson(json))
+          .toList();
+    } on SocketException {
+      throw Exception('No internet connection');
+    } on TimeoutException {
+      throw Exception('Request timed out. Please try again.');
+    } on FormatException {
+      throw Exception('Unexpected data format received');
+    } on ApiException {
+      rethrow;
+    } catch (e) {
+      throw Exception('An Unexpected error occured: $e');
+    }
+  }
+  
   // throw custom ApiException for non-200 responses
   void _checkResponse(http.Response response){
     // if not successful
