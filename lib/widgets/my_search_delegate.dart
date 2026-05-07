@@ -6,6 +6,7 @@ import 'package:flutter_recipe_browser/services/meal_api_service.dart';
 
 class MySearchDelegate extends SearchDelegate{
   final _serviceApi = MealApiService(); // connect with api
+  String _lastQuery = '';
   
   // for debounce implementation
   Timer? _debounce;
@@ -37,12 +38,19 @@ class MySearchDelegate extends SearchDelegate{
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    _onQueryChanged(query);
-    
-    if(query.isEmpty) {
-      return const Center(
+
+    if(query.trim().isEmpty) {
+      _resultsNotifier.value = [];
+      _isLoading.value = false;
+      return  Center(
         child: Text('Search for Meal'),
       );
+    }
+
+    // avoid requesting if the query is the same
+    if(query != _lastQuery){
+      _lastQuery = query;
+      _onQueryChanged(query);
     }
     
     return ValueListenableBuilder<bool>(
@@ -97,6 +105,15 @@ class MySearchDelegate extends SearchDelegate{
         _isLoading.value = false;
       }
     });
+  }
+  
+  @override
+  void dispose() {
+    // dispose to avoid memory leak
+    super.dispose();
+    _debounce?.cancel();
+    _resultsNotifier.dispose();
+    _isLoading.dispose();
   }
   
   Widget _buildMealList(List<Meal> meals) {
