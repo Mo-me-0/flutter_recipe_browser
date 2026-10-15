@@ -27,7 +27,11 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: Color(0xFF010101),
       appBar: AppBar(
-        title: const Text('Recipe Browser App',),
+        title: const Text('Recipe Browser App',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         backgroundColor: Color(0xFF010101),
         foregroundColor: Color(0xFFF2FCFC),
         actions: [
@@ -70,8 +74,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   // error message
                   Text(
                     snapshot.error.toString()
-                    // to make it more clear for users
-                    .replaceAll('Exception: ', ''),
+                    .replaceAll('Exception: ', ''), // to make it more clear for users
+                    style: TextStyle(
+                      color: Color(0xFFF2FCFC),
+                    ),
                   ),
                   const SizedBox(height: 10,),
                   
@@ -81,7 +87,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     color: Color(0xFFFF5f39),
                     icon: const Icon(Icons.refresh),
                   ),
-                  const Text('Retry'),
+                  const Text('Retry',
+                    style: TextStyle(
+                      color: Color(0xFFF2FCFC),
+                    ),
+                  ),
                 ],
               ),
             );

@@ -28,10 +28,15 @@ class _CategoryScreenState extends State<CategoryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFF010101),
       appBar: AppBar(
-        title: Text(widget.categoryName),
-        backgroundColor: Colors.blueGrey,
-        foregroundColor: Colors.white,
+        title: Text(widget.categoryName,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: Color(0xFF010101),
+        foregroundColor: Color(0xFFF2FCFC),
       ),
       body: FutureBuilder<List<Meal>>(
         // trucks the progress of fetching meals list
@@ -44,7 +49,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
           if(snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
               child: CircularProgressIndicator(
-                color: Colors.blue,
+                color: Color(0xFFFF5f39),
               ),
             );
           }
@@ -58,18 +63,20 @@ class _CategoryScreenState extends State<CategoryScreen> {
                   // error message
                   Text(
                     snapshot.error.toString()
-                    // to make it more clear for users
-                    .replaceAll('Exception: ', ''),
+                    .replaceAll('Exception: ', ''), // to make it more clear for users
+                    style: TextStyle(color: Color(0xFFF2FCFC),),
                   ),
                   const SizedBox(height: 10,),
                   
                   // retry button to reload
                   IconButton(
                     onPressed: _refreshScreen,
-                    color: Colors.blue,
+                    color: Color(0xFFFF5f39),
                     icon: const Icon(Icons.refresh),
                   ),
-                  const Text('Retry'),
+                  const Text('Retry',
+                    style: TextStyle(color: Color(0xFFF2FCFC),),
+                  ),
                 ],
               ),
             );
@@ -88,10 +95,9 @@ class _CategoryScreenState extends State<CategoryScreen> {
           
           return RefreshIndicator(
             // refresh when scrolling down
-            color: Colors.blue, // refresh icon color
+            color: Color(0xFFFF5f39), // refresh icon color
             onRefresh: () async {
               _refreshScreen();
-              await _categoryData;
             },
             
             // meal list UI
@@ -102,42 +108,73 @@ class _CategoryScreenState extends State<CategoryScreen> {
                 // access individual meal data
                 final meal = meals[index];
                 
-                return Card(
-                  color: Colors.blueGrey,
-                  child: ListTile(
-                    // navigate to details screen
-                    onTap: () => _openMeal(context, meal.idMeal),
-                    contentPadding: const EdgeInsets.all(16),
-                    textColor: Colors.white,
-                    
-                    // meal image
-                    leading: SizedBox(
-                      width: 50,
-                      height: 50,
-                      child: Image.network(
-                        meal.strMealThumb, // image from api
-                        
-                        // while loading the image, show loding circle
-                        loadingBuilder: (context, child, loadingProgress) {
-                          if(loadingProgress == null) return child;
-                          return const CircularProgressIndicator(
-                              color:Colors.blue
-                          );
-                        },
-                        
-                        // when image didn't load, show brocken image icon
-                        errorBuilder: (context, error, stackTrace) {
-                          return Icon(
-                            Icons.broken_image,
-                            color: Colors.white,
-                            size: 40,
-                          );
-                        },
+                return ListTile(
+                  // navigate to details screen
+                  onTap: () => _openMeal(context, meal.idMeal),
+                  contentPadding: const EdgeInsets.all(0),
+                  
+                  // meal title
+                  title: Stack(
+                    alignment: Alignment.topRight,
+                    children: [
+                      Positioned.fill(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: Image.network(
+                            meal.strMealThumb, // image from api
+                            fit: BoxFit.cover, // fit the image to the container
+                            height: 150,
+                                          
+                            // while loading the image, show loding circle
+                            loadingBuilder: (context, child, loadingProgress) {
+                              if(loadingProgress == null) return child;
+                              return Center(
+                                child: const CircularProgressIndicator(
+                                    color:Color(0xFFFF5f39),
+                                ),
+                              );
+                            },
+                            
+                            // when image didn't load, show brocken image icon
+                            errorBuilder: (context, error, stackTrace) {
+                              return Icon(
+                                Icons.broken_image,
+                                color: Color(0xFFFF5f39),
+                                size: 150,
+                              );
+                            },
+                          ),
+                        ),
                       ),
-                    ),
-                    
-                    // meal title
-                    title: Text(meal.strMeal),
+
+                      Container(
+                        height: 150,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                            colors: [
+                              Color(0xFF010101),
+                              Color(0xFF010101).withValues(alpha: 0.1),
+                            ],
+                          ),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+
+                      Positioned.fill(
+                        top: 10,
+                        left: 10,
+                        child: Text(
+                          meal.strMeal,
+                          style: const TextStyle(
+                            color: Color(0xFFF2FCFC),
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 );
               },
