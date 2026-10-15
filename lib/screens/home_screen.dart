@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_recipe_browser/models/meal_category.dart';
 import 'package:flutter_recipe_browser/screens/category_screen.dart';
@@ -24,10 +25,11 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFF010101),
       appBar: AppBar(
         title: const Text('Recipe Browser App',),
-        backgroundColor: Colors.blueGrey,
-        foregroundColor: Colors.white,
+        backgroundColor: Color(0xFF010101),
+        foregroundColor: Color(0xFFF2FCFC),
         actions: [
           IconButton(
             onPressed: () {
@@ -54,7 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
           if(snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
               child: CircularProgressIndicator(
-                color: Colors.blue,
+                color: Color(0xFFFF5f39),
               ),
             );
           }
@@ -76,7 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   // retry button to reload
                   IconButton(
                     onPressed: _refreshScreen,
-                    color: Colors.blue,
+                    color: Color(0xFFFF5f39),
                     icon: const Icon(Icons.refresh),
                   ),
                   const Text('Retry'),
@@ -99,7 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
           // show categories in grid
           return RefreshIndicator(
             // refresh when scrolling down
-            color: Colors.blue, // refresh icon color
+            color: Color(0xFFFF5f39), // refresh icon color
             onRefresh: () async {
               _refreshScreen();
               await _categories;
@@ -112,6 +114,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2, // row count
                   mainAxisSpacing: 10, // horizontal spacing
+                  crossAxisSpacing: 20, // vertical spacing
                   childAspectRatio: 0.9, // space between children
                 ),
                 itemBuilder: (context, index) {
@@ -126,68 +129,73 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
               
                     // touch feedback on tap 
-                    splashColor: Colors.grey,
-                    borderRadius: BorderRadius.circular(12),
+                    splashColor: Color(0xFF010101),
                     
                     // category card UI  
-                    child: Card(
-                      color: Colors.blueGrey,
-                      child: GridTile(
-                        
-                        // category image
-                        header: Padding(
-                          padding: const EdgeInsets.all(12),
-                          child: Image.network(
-                            category.strCategoryThumb,
-                            width: 70,
-                            height: 70,
-                            
-                            // while loading the image, show loding circle
-                            loadingBuilder: (context, child, loadingProgress) {
-                              if(loadingProgress == null) return child;
-                              return const Center(
-                                child: CircularProgressIndicator(
-                                  color: Colors.blue,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: Stack(
+                        children: [
+                          Positioned.fill(
+                            child: Image.network(
+                              category.strCategoryThumb,
+                              fit: BoxFit.cover,
+                              
+                              // while loading the image, show loding circle
+                              loadingBuilder: (context, child, loadingProgress) {
+                                if(loadingProgress == null) return child;
+                                return const Center(
+                                  child: CircularProgressIndicator(
+                                    color: Color(0xFFFF5f39),
+                                  ),
+                                );
+                              },
+                              
+                              // when image didn't load, show brocken image icon
+                              errorBuilder:(context, error, stackTrace) {
+                                return const Icon(
+                                  Icons.broken_image,
+                                  color: Color(0xFFF2FCFC),
+                                  size: 60,
+                                );
+                              },
+                            ),
+                          ),
+                      
+                          // category title
+                          Positioned(
+                            bottom: 5,
+                            left: 5,
+                            right: 5,
+                            child: ClipRect(
+                              child: BackdropFilter(
+                                filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                                child: Container(
+                                  height: 60,
+                                  decoration: BoxDecoration(
+                                    color: Color(0x80010101),
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
                                 ),
-                              );
-                            },
-                            
-                            // when image didn't load, show brocken image icon
-                            errorBuilder:(context, error, stackTrace) {
-                              return const Icon(
-                                Icons.broken_image,
-                                color: Colors.white,
-                                size: 60,
-                              );
-                            },
-                          ),
-                        ),
-                        
-                        // category description
-                        footer: Padding(
-                          padding: const EdgeInsets.all(20),
-                          child: Text(
-                            category.strCategoryDescription,
-                            maxLines: 3,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 12,
+                              ),
                             ),
                           ),
-                        ),
-                        
-                        // category title
-                        child: Center(
-                          child: Text(
-                            category.strCategory,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
+
+                          // category title
+                          Positioned(
+                            bottom: 20,
+                            left: 20,
+                            right: 20,
+                            child: Text(
+                              category.strCategory,
+                              style: const TextStyle(
+                                  color: Color(0xFFF2FCFC),
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
                             ),
                           ),
-                        ),
+                        ],
                       ),
                     ),
                   );
