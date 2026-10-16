@@ -27,11 +27,8 @@ class _DetailScreenState extends State<DetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Meal Detail'),
-        backgroundColor: Colors.blueGrey,
-        foregroundColor: Colors.white,
-      ),
+      backgroundColor: Color(0xFF010101),
+      
       body: FutureBuilder<Meal>(
         // trucks the progress of fetching meals data
         future: _meal, 
@@ -41,7 +38,7 @@ class _DetailScreenState extends State<DetailScreen> {
           if(snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
               child: CircularProgressIndicator(
-                color: Colors.blue,
+                color: Color(0xFFFF5f39),
               ),
             );
           }
@@ -57,16 +54,21 @@ class _DetailScreenState extends State<DetailScreen> {
                     snapshot.error.toString()
                     // to make it more clear for users
                     .replaceAll('Exception: ', ''),
+                    style: TextStyle(color: Color(0xFFF2FCFC)),
                   ),
                   const SizedBox(height: 10,),
                   
                   // retry button to reload
                   IconButton(
                     onPressed: _refreshScreen,
-                    color: Colors.blue,
+                    color: Color(0xFFFF5f39),
                     icon: const Icon(Icons.refresh),
                   ),
-                  const Text('Retry'),
+                  const Text('Retry',
+                    style: TextStyle(
+                      color: Color(0xFFF2FCFC),
+                    ),
+                  ),
                 ],
               ),
             );
@@ -83,47 +85,48 @@ class _DetailScreenState extends State<DetailScreen> {
           // get meal detail data
           final mealData = snapshot.data!;
           
-          return Padding(
-            padding: const EdgeInsets.all(30),
-            child: Container(
-              padding: EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.blueGrey,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Center(
-                child: RefreshIndicator(
-                  onRefresh: () async {
-                    _refreshScreen();
-                    await _meal;
-                  },
-                  color: Colors.blue,
-                  child: SingleChildScrollView(
-                  child: Column(
-                    spacing: 20,
+          return CustomScrollView(
+            slivers: [
+              // App bar
+              SliverAppBar(
+                expandedHeight: 250,
+                backgroundColor: Color(0xFF010101),
+                pinned: true,
+                
+                leading: IconButton(
+                  style: IconButton.styleFrom(
+                    backgroundColor: Color(0xFF010101).withValues(alpha: 0.3),
+                  ),
+                  icon: Icon(Icons.arrow_back,
+                    color: Color(0xFFF2FCFC),
+                  ),
+                  onPressed: () => Navigator.pop(context),
+                ),
+
+                flexibleSpace: FlexibleSpaceBar(
+                  title: Text(
+                    mealData.strMeal,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFFF2FCFC),
+                    ),
+                  ),
+
+                  background: Stack(
                     children: [
-                      // meal title
-                      Text(mealData.strMeal,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      
-                      // meal image
-                      SizedBox(
-                        width: 250,
-                        height: 250,
+                      Positioned.fill(
                         child: Image.network(
-                          mealData.strMealThumb, // image from api
+                          mealData.strMealThumb,
+                          fit: BoxFit.fill,
                           
                           // while loading the image, show loding circle
                           loadingBuilder: (context, child, loadingProgress) {
                             if(loadingProgress == null) return child;
-                            return const CircularProgressIndicator(
-                              padding: EdgeInsets.all(100),
-                              color:Colors.blue,
+                            return Center(
+                              child: const CircularProgressIndicator(
+                                  color:Color(0xFFFF5f39),
+                              ),
                             );
                           },
                           
@@ -131,62 +134,100 @@ class _DetailScreenState extends State<DetailScreen> {
                           errorBuilder: (context, error, stackTrace) {
                             return Icon(
                               Icons.broken_image,
-                              color: Colors.white,
-                              size: 40,
+                              color: Color(0xFFFF5f39),
+                              size: 150,
                             );
                           },
                         ),
                       ),
-                      
-                      // ingredients with measures
+
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Color(0xFF010101).withValues(alpha: 0),
+                              Color(0xFF010101),
+                            ], 
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+
+              // Main Containt
+              SliverToBoxAdapter(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Color(0xFF010101),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Column(
+                    // ingredients with measures
+                    children: [
                       Text('Ingredients',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: Color(0xFFF2FCFC),
+                          fontSize: 20,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          for (String ingredient in mealData.ingredients) 
-                            Text('• $ingredient', 
-                              style: TextStyle(
-                                color: Colors.white,
-                              ),
+                    
+                      for (String ingredient in mealData.ingredients) 
+                        ListTile(
+                          title: Text('• $ingredient', 
+                            style: TextStyle(
+                              color: Color(0xFFF2FCFC),
                             ),
-                        ],
-                      ),
+                          ),
+                        ),
                       
                       // instructions
                       Text('Instructions',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: Color(0xFFF2FCFC),
+                          fontSize: 20,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      Text(mealData.strInstructions,
-                        style: TextStyle(
-                          color: Colors.white,
+                      Padding(
+                        padding: const EdgeInsets.all(15),
+                        child: Text(mealData.strInstructions,
+                          style: TextStyle(
+                            color: Color(0xFFF2FCFC),
+                          ),
                         ),
                       ),
                       
+                      SizedBox(height: 20,),
+
                       // youtube url launcher
                       ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFFFF5f39),
+                          disabledBackgroundColor: Colors.grey[900],
+                        ),
                         onPressed: mealData.strYoutube.isEmpty 
                         ? null 
                         : () => _openYoutube(mealData.strYoutube),
                         child: Text('Youtube Video',
                           style: TextStyle(
-                            color: Colors.blue,
+                            color: Color(0xFFF2FCFC),
                           ),
                         ),
                       ),
+
+                      SizedBox(height: 20)
                     ],
                   ),
-                ),)
+                ),
               ),
-            ),
-          );
+            ],
+          ); 
         }
       ),
     );
